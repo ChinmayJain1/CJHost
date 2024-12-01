@@ -57,4 +57,4 @@ jobs:
         git commit -m "CJHost"
         git push
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Automatically provided by GitHub for pushing
+        GITHUB_TOKEN: # Automatically provided by GitHub for pushing
