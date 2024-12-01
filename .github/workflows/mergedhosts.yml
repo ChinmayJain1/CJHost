@@ -1,0 +1,60 @@
+name: CJHost
+
+on:
+  workflow_dispatch:  # Manual trigger
+  # schedule:
+  #   - cron: '0 0 * * *'  # Schedule it periodically (optional)
+
+jobs:
+  merge_and_commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download multiple files
+      run: |
+        # List of URLs to download
+        urls=(
+          "https://raw.githubusercontent.com/badmojr/1Hosts/master/Pro/hosts.txt”
+          "https://www.github.developerdan.com/hosts/lists/amp-hosts-extended.txt”
+          "https://adaway.org/hosts.txt”
+          "https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/AdguardMobileAds.txt”
+          "https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/AdguardMobileSpyware.txt”
+          "https://raw.githubusercontent.com/furkun/Anti-IP-Grabber-Hosts/main/hosts”
+          "https://raw.githubusercontent.com/yhonay/antipopads/master/hosts”
+          "https://raw.githubusercontent.com/anudeepND/blacklist/master/CoinMiner.txt”
+          "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Hosts/GoodbyeAds.txt”
+          "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Extension/GoodbyeAds-Xiaomi-Extension.txt”
+          "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Extension/GoodbyeAds-Spotify-AdBlock.txt”
+          "https://raw.githubusercontent.com/jerryn70/GoodbyeAds/master/Extension/GoodbyeAds-YouTube-AdBlock.txt”
+          "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=0&mimetype=plaintext”
+          "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts”
+          "https://gh-pages.ewpratten.com/youtube_ad_blocklist/domains.txt”
+          "https://easylist-downloads.adblockplus.org/indianlist+easylist.txt”
+          "https://raw.githubusercontent.com/mhxion/pornaway/master/hosts/porn_ads.txt”
+          "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling/hosts”
+        )
+
+        # Loop through the URLs and download each one
+        for url in "${urls[@]}"; do
+          filename=$(basename $url)
+          curl -o $filename $url
+        done
+
+    - name: Merge all files into one
+      run: |
+        # Concatenate all downloaded files into one merged file
+        cat *.txt > mergedhosts.txt
+        echo "Merged files successfully into mergedhosts.txt"
+
+    - name: Commit and push merged file
+      run: |
+        git config user.name "ChinmayJain1"
+        git config user.email "chinmaydroid@gmail.com"
+        git add mergedhosts.txt
+        git commit -m "CJHost"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Automatically provided by GitHub for pushing
